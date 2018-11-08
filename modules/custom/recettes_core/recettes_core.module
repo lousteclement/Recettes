@@ -1,0 +1,44 @@
+<?php
+
+use \Drupal\node\Entity\Node;
+use \Drupal\image\Entity\ImageStyle;
+use \Drupal\paragraphs\Entity\Paragraph;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\taxonomy\Entity\Term;
+
+function recettes_core_preprocess_node(&$variables){
+	$node = $variables ['elements']['#node'];
+	if($node){
+		$nodeType = $node->getType();
+		if($nodeType == "recette"){
+			$field_body = $node->get('body')->getValue();
+			$field_body = $field_body[0]['value'];
+			$field_nb_personne = $node->get('field_nombre_de_personnes')->getValue();
+			$field_nb_personne = intval($field_nb_personne[0]['value']);
+			$paragraph= $node->get('field_ingredient')->getValue();
+			$i=0;
+			$infos = array();
+			foreach($paragraph as $element){
+				$p = \Drupal\paragraphs\Entity\Paragraph::load( $element['target_id'] );
+				$infos[$i]['id'] = $i;
+				$ingredient_tid = $p->field_ingredient->getValue();
+				$ingredient_tid = $ingredient_tid[0]["target_id"];
+				$ingredient = Term::load($ingredient_tid);
+				$ingredient = $ingredient->getName();
+				$infos[$i]['nom'] = $ingredient;
+				$quantite = $p->field_quantite->getvalue();
+				$quantite = floatval($quantite[0]['value']);
+				$infos[$i]['quantite'] = $quantite;
+				$quantite_par_personne = $quantite/$field_nb_personne;
+				$infos[$i]['qte_par_personne']=$quantite_par_personne;
+				$unite = $p->field_unite->getValue();
+				$unite = $unite[0]['value'];
+				$infos[$i]['unite'] = $unite;
+				$i++;
+			}
+			$variables['infos']=$infos;
+			$variables['bodytext']= $field_body;
+			$variables['nb_personne']=$field_nb_personne;
+		}
+	}
+}

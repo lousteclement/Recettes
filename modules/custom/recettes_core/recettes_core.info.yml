@@ -1,0 +1,6 @@
+name: Recettes core
+type: module
+description: global config
+version: '8.x-1'
+core: '8.x'
+project: 'recettes_core'
