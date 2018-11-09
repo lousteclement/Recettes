@@ -15,6 +15,9 @@ function recettes_core_preprocess_node(&$variables){
 			$field_body = $field_body[0]['value'];
 			$field_nb_personne = $node->get('field_nombre_de_personnes')->getValue();
 			$field_nb_personne = intval($field_nb_personne[0]['value']);
+			$field_image = $node->get('field_image_recette')->getValue();
+			var_dump($field_image);
+			die();
 			$paragraph= $node->get('field_ingredient')->getValue();
 			$i=0;
 			$infos = array();
